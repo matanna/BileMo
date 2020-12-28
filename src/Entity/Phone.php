@@ -2,10 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\PhoneRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\PhoneRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=PhoneRepository::class)
@@ -16,71 +18,99 @@ class Phone
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * 
+     * @Groups({"get:phones"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * 
+     * @Groups({"get:phones"})
      */
     private $model;
 
     /**
      * @ORM\Column(type="text", nullable=true)
+     * 
+     * @Groups({"get:phones"})
      */
     private $catchPhrase;
 
     /**
      * @ORM\Column(type="text")
+     * 
+     * @Groups({"get:phones"})
      */
     private $description;
 
     /**
      * @ORM\Column(type="float")
+     * 
+     * @Groups({"get:phones"})
      */
     private $price;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * 
+     * @Groups({"get:phones"})
      */
     private $color;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * 
+     * @Groups({"get:phones"})
      */
     private $size;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * 
+     * @Groups({"get:phones"})
      */
     private $batteryPower;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * 
+     * @Groups({"get:phones"})
      */
     private $osName;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * 
+     * @Groups({"get:phones"})
      */
     private $weight;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * 
+     * @Groups({"get:phones"})
      */
     private $memory;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
+     * 
+     * @Groups({"get:phones"})
      */
     private $availability;
 
     /**
-     * @ORM\ManyToOne(targetEntity=PhoneBrand::class, inversedBy="_phones")
+     * @ORM\ManyToOne(targetEntity=PhoneBrand::class, inversedBy="phones")
+     * 
+     * @Groups({"get:phones"})
      */
     private $brand;
 
     /**
      * @ORM\ManyToMany(targetEntity=Photo::class, mappedBy="phones")
+     * 
+     * @Groups({"get:phones"})
      */
     private $photos;
 
