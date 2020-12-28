@@ -26,7 +26,7 @@ class ProductsFixture extends Fixture
 
             for ($j=0; $j<=rand(5, 15); $j++) {
                 $phone = new Phone();
-                $phone->setModel($phoneBrand->getBrand() . ' ' . $faker->sentence(3, true))
+                $phone->setModel($phoneBrand->getBrand() . ' ' . $faker->word() . '-' . $faker->word())
                       ->setCatchPhrase($faker->sentence(7, true))
                       ->setDescription($faker->paragraph(3, true))
                       ->setPrice($faker->randomFloat(2, 600, 1500))
@@ -41,7 +41,7 @@ class ProductsFixture extends Fixture
                 ;
 
                 $photo = new Photo();
-                $photo->setName('public/photos/' . $phoneBrand->getBrand() . '_' . $phone->getModel() . '_' . $faker->randomElement(['front', 'back', 'side']));
+                $photo->setName('public/photos/' . $phoneBrand->getBrand() . '_' . $phone->getModel() . '_' . $faker->randomElement(['front', 'back', 'side']) . '.jpg');
                 $photo->addPhone($phone);
 
                 $phone->addPhoto($photo);
