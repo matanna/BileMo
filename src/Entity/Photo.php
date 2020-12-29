@@ -18,15 +18,13 @@ class Photo
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * 
-     * @Groups({"get:phones"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      * 
-     * @Groups({"get:phones"})
+     * @Groups({"show_phone"})
      */
     private $name;
 

@@ -19,98 +19,98 @@ class Phone
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * 
-     * @Groups({"get:phones"})
+     * @Groups({"list_phones", "show_phone"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      * 
-     * @Groups({"get:phones"})
+     * @Groups({"list_phones", "show_phone"})
      */
     private $model;
 
     /**
      * @ORM\Column(type="text", nullable=true)
      * 
-     * @Groups({"get:phones"})
+     * @Groups({"show_phone"})
      */
     private $catchPhrase;
 
     /**
      * @ORM\Column(type="text")
      * 
-     * @Groups({"get:phones"})
+     * @Groups({"show_phone"})
      */
     private $description;
 
     /**
      * @ORM\Column(type="float")
      * 
-     * @Groups({"get:phones"})
+     * @Groups({"list_phones", "show_phone"})
      */
     private $price;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * 
-     * @Groups({"get:phones"})
+     * @Groups({"list_phones", "show_phone"})
      */
     private $color;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * 
-     * @Groups({"get:phones"})
+     * @Groups({"list_phones", "show_phone"})
      */
     private $size;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * 
-     * @Groups({"get:phones"})
+     * @Groups({"show_phone"})
      */
     private $batteryPower;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * 
-     * @Groups({"get:phones"})
+     * @Groups({"show_phone"})
      */
     private $osName;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * 
-     * @Groups({"get:phones"})
+     * @Groups({"show_phone"})
      */
     private $weight;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
      * 
-     * @Groups({"get:phones"})
+     * @Groups({"show_phone"})
      */
     private $memory;
 
     /**
      * @ORM\Column(type="boolean", nullable=true)
      * 
-     * @Groups({"get:phones"})
+     * @Groups({"list_phones", "show_phone"})
      */
     private $availability;
 
     /**
      * @ORM\ManyToOne(targetEntity=PhoneBrand::class, inversedBy="phones")
      * 
-     * @Groups({"get:phones"})
+     * @Groups({"list_phones", "show_phone"})
      */
     private $brand;
 
     /**
      * @ORM\ManyToMany(targetEntity=Photo::class, mappedBy="phones")
      * 
-     * @Groups({"get:phones"})
+     * @Groups({"show_phone"})
      */
     private $photos;
 

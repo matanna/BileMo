@@ -3,8 +3,10 @@
 namespace App\Repository;
 
 use App\Entity\Phone;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use App\Request\QueryValidation;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\HttpFoundation\Request;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 
 /**
  * @method Phone|null find($id, $lockMode = null, $lockVersion = null)
@@ -19,32 +21,48 @@ class PhoneRepository extends ServiceEntityRepository
         parent::__construct($registry, Phone::class);
     }
 
-    // /**
-    //  * @return Phone[] Returns an array of Phone objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @param $request Request 
+     * 
+     * @return Phone[] Returns an array of Phone objects
+     */
+    public function filter(Request $request)
     {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('p.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
+        $queryValidation = new QueryValidation();
+        $queryValidation->validateQueryParam($request->query);
+        
+        if ($queryValidation->getBrand()) {
 
-    /*
-    public function findOneBySomeField($value): ?Phone
-    {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            return $this->createQueryBuilder('phone')
+                   ->leftJoin('phone.brand', 'phoneBrand')
+                   ->andWhere('phoneBrand.brand = :brand')
+                   ->setParameter('brand', $queryValidation->getBrand())
+                   ->getQuery()
+                   ->execute()
+            ;
+        }
+        
+        if (in_array($queryValidation->getAvaibale(), ["0", "1"])) {
+            
+            return $this->createQueryBuilder('phone')
+                   ->andWhere('phone.availability = :availability')
+                   ->setParameter('availability', $queryValidation->getAvaibale())
+                   ->getQuery()
+                   ->execute()
+            ;
+        }
+        
+        if ($queryValidation->getMinprice() || $queryValidation->getMaxprice()) {
+            
+            return $this->createQueryBuilder('phone')
+                   ->andWhere('phone.price > :minprice')
+                   ->andWhere('phone.price < :maxprice')
+                   ->setParameter('minprice', $queryValidation->getMinprice())
+                   ->setParameter('maxprice', $queryValidation->getMaxprice())
+                   ->getQuery()
+                   ->execute()
+            ;
+        }
+        
     }
-    */
 }

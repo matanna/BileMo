@@ -18,15 +18,13 @@ class PhoneBrand
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * 
-     * @Groups({"get:phones"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      * 
-     * @Groups({"get:phones"})
+     * @Groups({"list_phones", "show_phone"})
      */
     private $brand;
 

@@ -7,15 +7,24 @@ use App\Entity\Photo;
 use App\Entity\PhoneBrand;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use App\Repository\PhotoRepository;
 
 class ProductsFixture extends Fixture
 {
+    private $photoRepository;
+
+    public function __construct(PhotoRepository $photoRepository) 
+    {
+        $this->photoRepository = $photoRepository;
+    }
+
     public function load(ObjectManager $manager)
     {
         $faker = \Faker\Factory::create();
 
         $phoneBrands = ['Samsung', 'Huawei', 'iPhone', 'Sony', 'Xiaomi'];
         $memory = [16, 32, 64, 28, 256, 512];
+        $photos = ['front', 'back', 'side', 'camera', 'micro'];
 
         for ($i=0; $i<=4; $i++) {
             $phoneBrand = new PhoneBrand();
@@ -39,18 +48,33 @@ class ProductsFixture extends Fixture
                       ->setAvailability($faker->randomElement([true, false]))
                       ->setBrand($phoneBrand)
                 ;
+                for ($l=0; $l<=4; $l++) {
+                    $photo = new Photo();
+                    $namePhoto = 'public/photos/' . $phone->getModel() . '_' . array_rand(array_flip($photos)) . '.jpg';
+                    
+                    $existingPhoto = $this->photoRepository->findOneBy(['name' => $namePhoto]);
 
-                $photo = new Photo();
-                $photo->setName('public/photos/' . $phoneBrand->getBrand() . '_' . $phone->getModel() . '_' . $faker->randomElement(['front', 'back', 'side']) . '.jpg');
-                $photo->addPhone($phone);
+                    if ($existingPhoto) {
+                        $existingPhoto->addPhone($phone);
+                        $phone->addPhoto($existingPhoto);
+                        $manager->persist($existingPhoto);
+                        $manager->persist($phone);
+                        $manager->flush();
 
-                $phone->addPhoto($photo);
+                    } else {
+                        $photo->setName($namePhoto);
 
-                $manager->persist($photo);
-                $manager->persist($phone);
+                        $photo->addPhone($phone);
+                        $phone->addPhoto($photo);
+
+                        $manager->persist($photo);
+                        $manager->persist($phone);
+                        $manager->flush();
+                    }
+                }
+                
             }
         }
-
         $manager->flush();
     }
 }
