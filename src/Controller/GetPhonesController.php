@@ -16,7 +16,23 @@ class GetPhonesController extends AbstractController
      */
     public function getPhones(PhoneRepository $phoneRepository, Request $request): Response
     {
-        $phones = $phoneRepository->findAll();
+        try {
+            $phones = $phoneRepository->findPhones($request);
+        } catch (\Exception $e) {
+            return $this->json([
+                'status' => 400 . ": Bad Request",
+                'message' => $e->getMessage()
+            ], 
+            400);
+        }
+        
+        if ($phones == []) {
+            return $this->json([
+                'status' => 200 . ": Success",
+                'message' => "Aucun résultat pour cette requête."
+            ],
+            200);
+        }
 
         return $this->json($phones, 200, [],[
                 'groups' => 'list_phones'
@@ -38,10 +54,10 @@ class GetPhonesController extends AbstractController
     /**
      * @Route("/phones/filter", name="filter_phones", methods={"GET"})
      */
-    public function filterPhones(PhoneRepository $phoneRepository, Request $request): Response
+    /*public function filterPhones(PhoneFilterRepository $phoneFilterRepository, Request $request): Response
     {
         try {
-            $phones = $phoneRepository->filter($request);
+            $phones = $phoneFilterRepository->filter($request);
         } catch (\Exception $e) {
             return $this->json([
                 'status' => 400 . ": Bad Request",
@@ -53,7 +69,7 @@ class GetPhonesController extends AbstractController
         if ($phones == []) {
             return $this->json([
                 'status' => 200 . ": Success",
-                'message' => "Aucun résultats pour cette requête."
+                'message' => "Aucun résultat pour cette requête."
             ],
             200);
         }
@@ -62,5 +78,5 @@ class GetPhonesController extends AbstractController
                 'groups' => 'list_phones'
             ]
         );
-    }
+    }*/
 }

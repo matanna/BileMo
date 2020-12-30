@@ -2,10 +2,6 @@
 
 namespace App\Request;
 
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\InputBag;
-use Symfony\Component\HttpFoundation\JsonResponse;
-
 /**
  * PhonesFilterValidation - This class check and valid query parameters necessary for filter feature for phones
  */

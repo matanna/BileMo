@@ -3,7 +3,6 @@
 namespace App\Repository;
 
 use App\Entity\Phone;
-use App\Response\Pagination;
 use App\Request\ParamValidation;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,42 +14,36 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
  * @method Phone[]    findAll()
  * @method Phone[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class PhoneRepository extends ServiceEntityRepository
-{    
+class PhoneFilterRepository extends ServiceEntityRepository
+{
     /**
      * paramValidation
-     *
-     * @var App\Request\ParamValidation
+     * 
+     * @var mixed
      */
-    private $paramValidation;
-    
-    /**
-     * pagination
-     *
-     * @var App\Response\Pagination
-     */
-    private $pagination;
+    private ParamValidation $paramValidation;
 
-    public function __construct(ManagerRegistry $registry, 
-        ParamValidation $paramValidation, Pagination $pagination
-    ) {
+    public function __construct(ManagerRegistry $registry, ParamValidation $paramValidation)
+    {
         parent::__construct($registry, Phone::class);
-
+        
         $this->paramValidation = $paramValidation;
-        $this->pagination = $pagination;
     }
 
     /**
-    * @param $request Request 
-    * 
-    * @return Phone[] Returns an array of Phone objects
-    */
-    public function findPhones(Request $request)
+     * @param $request Request 
+     * 
+     * @return Phone[] Returns an array of Phone objects
+     */
+    public function filter(Request $request)
     {
         if($request->query) {
 
             $this->paramValidation->validateParam($request->query);
             
+            if($request->query->all() == null) {
+                throw new \Exception("Aucun paramètres n'est spécifié."); 
+            }
         
             $qb = $this->createQueryBuilder('phone')
                        ->leftJoin('phone.brand', 'phoneBrand')
@@ -78,15 +71,8 @@ class PhoneRepository extends ServiceEntityRepository
                 $qb->andWhere('phone.price < :maxprice')
                 ->setParameter('maxprice', $this->paramValidation->getMaxprice());
             }
-
-            if ($this->paramValidation->getSearch()) {
-                $qb->andWhere('phone.model LIKE :model')
-                   ->setParameter('model', '%'.$this->paramValidation->getSearch().'%');
-            }
                 
             $query = $qb->getQuery();
-
-            $results = $this->pagination->paginate($query->execute(), $nbPerPage = 10, $numPage = 0); 
 
             return $query->execute();    
         }

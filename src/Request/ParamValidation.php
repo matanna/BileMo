@@ -2,6 +2,7 @@
 
 namespace App\Request;
 
+use App\Request\ParamSortValidation;
 use App\Request\PhonesFilterValidation;
 use Symfony\Component\HttpFoundation\InputBag;
 
@@ -10,41 +11,77 @@ class ParamValidation
     /**
      * phoneFilterValidation
      *
-     * @var mixed
+     * @var App\Request\PhonesFilterValidation
      */
     private $phoneFilterValidation;
+    
+    /**
+     * paramSortValidation
+     *
+     * @var App\Request\ParamSortValidation
+     */
+    private $paramSortValidation;
 
     /**
      * brand
      *
-     * @var mixed
+     * @var string
      */
     private $brand;
     
     /**
      * avaibale
      *
-     * @var mixed
+     * @var int
      */
     private $avaibale;
     
     /**
      * minprice
      *
-     * @var mixed
+     * @var int
      */
     private $minprice;
     
     /**
      * maxprice
      *
-     * @var mixed
+     * @var int
      */
     private $maxprice; 
+    
+    /**
+     * byPrice
+     *
+     * @var string
+     */
+    private $byprice;
+    
+    /**
+     * limit
+     *
+     * @var int
+     */
+    private $limit;
+    
+    /**
+     * offset
+     *
+     * @var int
+     */
+    private $offset;
+    
+    /**
+     * search
+     *
+     * @var string
+     */
+    private $search;
 
-    public function __construct(PhonesFilterValidation $phoneFilterValidation)
+    public function __construct(PhonesFilterValidation $phoneFilterValidation, ParamSortValidation $paramSortValidation)
     {
         $this->phoneFilterValidation = $phoneFilterValidation;
+        $this->paramSortValidation = $paramSortValidation;
     }
 
     /**
@@ -72,6 +109,18 @@ class ParamValidation
                 case 'maxprice':
                     $this->maxprice = $this->phoneFilterValidation->validateMaxprice($value);
                     break; 
+                case 'byprice':
+                    $this->byprice = $this->paramSortValidation->validateByprice($value);
+                    break;
+                case 'limit':
+                    $this->limit = $this->paramSortValidation->validateLimit($value);
+                    break;
+                case 'offset':
+                    $this->offset = $this->paramSortValidation->validateOffset($value);
+                    break;
+                case 'search':
+                    $this->search = $this->paramSortValidation->validateSearch($value);
+                    break;
                 default : 
                     throw new \Exception("-" . $param . "- ne correspond à aucun paramètres disponible.");
             }
@@ -102,5 +151,25 @@ class ParamValidation
     public function getMaxprice()
     {
         return $this->maxprice;
+    }
+
+    public function getByprice()
+    {
+        return $this->byprice;
+    }
+
+    public function getOffset()
+    {
+        return $this->offset;
+    }
+
+    public function getLimit()
+    {
+        return $this->limit;
+    }
+
+    public function getSearch()
+    {
+        return $this->search;
     }
 }
