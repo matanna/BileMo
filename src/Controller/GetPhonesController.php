@@ -50,6 +50,13 @@ class GetPhonesController extends AbstractController
             400);
         }
         
+        if ($phones == []) {
+            return $this->json([
+                'status' => 200 . ": Success",
+                'message' => "Aucun résultats pour cette requête."
+            ],
+            200);
+        }
 
         return $this->json($phones, 200, [],[
                 'groups' => 'list_phones'
