@@ -25,6 +25,20 @@ class PhoneRepository extends ServiceEntityRepository
     private $paramValidation;
     
     /**
+     * perPage
+     *
+     * @var int
+     */
+    private $perPage = 10;
+    
+    /**
+     * page
+     *
+     * @var int
+     */
+    private $page = 1;
+    
+    /**
      * pagination
      *
      * @var App\Response\Pagination
@@ -54,10 +68,7 @@ class PhoneRepository extends ServiceEntityRepository
         
             $qb = $this->createQueryBuilder('phone')
                        ->leftJoin('phone.brand', 'phoneBrand')
-                       ->orderBy('phone.price', $this->paramValidation->getByprice())
-                       ->setFirstResult($this->paramValidation->getOffset())
-                       ->setMaxResults($this->paramValidation->getLimit());
-                         
+                       ->orderBy('phone.price', $this->paramValidation->getByprice()); 
 
             if ($this->paramValidation->getBrand()) {
                 $qb->andWhere('phoneBrand.brand = :brand')
@@ -86,9 +97,17 @@ class PhoneRepository extends ServiceEntityRepository
                 
             $query = $qb->getQuery();
 
-            $results = $this->pagination->paginate($query->execute(), $nbPerPage = 10, $numPage = 0); 
+            if ($this->paramValidation->getPerPage()) {
+                $this->perPage = $this->paramValidation->getPerPage();
+            }
 
-            return $query->execute();    
+            if ($this->paramValidation->getPage()) {
+                $this->page = $this->paramValidation->getPage();
+            }
+            
+            $results = $this->pagination->paginate($query->execute(), $this->perPage, $this->page); 
+
+            return $results;    
         }
     }
 }

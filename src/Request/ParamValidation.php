@@ -77,6 +77,20 @@ class ParamValidation
      * @var string
      */
     private $search;
+    
+    /**
+     * perPage
+     *
+     * @var int
+     */
+    private $perPage;
+    
+    /**
+     * page
+     *
+     * @var int
+     */
+    private $page;
 
     public function __construct(PhonesFilterValidation $phoneFilterValidation, ParamSortValidation $paramSortValidation)
     {
@@ -120,6 +134,12 @@ class ParamValidation
                     break;
                 case 'search':
                     $this->search = $this->paramSortValidation->validateSearch($value);
+                    break;
+                case 'perpage':
+                    $this->perPage = $this->paramSortValidation->validatePerPage($value);
+                    break;
+                case 'page':
+                    $this->page = $this->paramSortValidation->validatePage($value);
                     break;
                 default : 
                     throw new \Exception("-" . $param . "- ne correspond à aucun paramètres disponible.");
@@ -171,5 +191,15 @@ class ParamValidation
     public function getSearch()
     {
         return $this->search;
+    }
+
+    public function getPerPage()
+    {
+        return $this->perPage;
+    }
+
+    public function getPage()
+    {
+        return $this->page;
     }
 }

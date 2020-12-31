@@ -63,4 +63,27 @@ class ParamSortValidation
         }
         return $search;
     }
+    
+    /**
+     * Method validatePerPage
+     *
+     * @param $perPage
+     *
+     * @return void
+     */
+    public function validatePerPage($perPage)
+    {
+        if (!preg_match("#^[0-9]+$#", $perPage)) {
+            throw new \Exception("Le paramètre perpage doit être un entier positif.");
+        }
+        return $perPage;
+    }
+
+    public function validatePage($page)
+    {
+        if (!preg_match("#^[0-9]+$#", $page)) {
+            throw new \Exception("Le paramètre page doit être un entier positif.");
+        }
+        return $page;
+    }
 }

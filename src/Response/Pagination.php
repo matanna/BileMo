@@ -2,8 +2,17 @@
 
 namespace App\Response;
 
+use App\Response\FormatResponse;
+
 class Pagination
-{        
+{    
+    /**
+     * formatResponse
+     *
+     * @var App\Response\FormatResponse
+     */
+    private $formatResponse;
+    
     /**
      * results
      *
@@ -32,6 +41,11 @@ class Pagination
      */
     private $nbPage;
 
+    public function __construct(FormatResponse $formatResponse)
+    {
+        $this->formatResponse= $formatResponse;
+    }
+
     /**
      * Method paginate
      *
@@ -45,13 +59,23 @@ class Pagination
     {
         $this->results = $results;
         $this->nbrPerPage = $nbrPerPage;
-        $this->numPage = $numPage;
+        $this->numPage = $numPage - 1;
 
         $this->nbPage = $this->countNbrPage();
 
+        if ($numPage > $this->nbPage) {
+            throw new \Exception ("Le numéro de la page demandée est supérieur aux nombre de pages disponibles pour cette requête.");
+        }
+
         $firstPageResult = $this->findFirstResult();
 
-        return $this->createPage($firstPageResult);  
+        $currentPage =  $this->createPage($firstPageResult);
+
+        $meta = $this->createMetadata($currentPage);
+
+        $response = $this->formatResponse->format($currentPage, $meta);
+
+        return $response;
     }
     
     /**
@@ -90,10 +114,34 @@ class Pagination
         $currentPage = [];
 
         $lastPageResult = $firstPageResult + $this->nbrPerPage;
+        
+        if ($lastPageResult > count($this->results)) {
+            $lastPageResult = count($this->results);
+        }
 
         for ($i = $firstPageResult; $i < $lastPageResult; $i++) {
             $currentPage[$i] = $this->results[$i];
         }
         return $currentPage;
+    }
+    
+    /**
+     * Method createMetadata
+     *
+     * @param $currentPage 
+     *
+     * @return void
+     */
+    private function createMetadata($currentPage)
+    {
+        $meta = [];
+
+        $meta['results_per_page'] = $this->nbrPerPage;
+        $meta['num_current_page'] = $this->numPage + 1;
+        $meta['num_total_pages'] = $this->nbPage;
+        $meta['results_in_current_page'] = count($currentPage);
+
+        return $meta;
+
     }
 }
