@@ -43,8 +43,15 @@ class GetPhonesController extends AbstractController
     /**
      * @Route("/phone/{id}", name="show_phone", methods={"GET"})
      */
-    public function showPhone(Phone $phone): Response 
+    public function showPhone(Phone $phone = null): Response 
     {
+        if ($phone == null) {
+            return $this->json([
+                'status' => 404 . ": Page not Found",
+                'message' => "Cette ressource n'existe pas."
+            ], 404);
+        }
+
         return $this->json($phone, 200, [],[
                 'groups' => 'show_phone'
             ]

@@ -14,8 +14,13 @@ class ClientFixture extends Fixture
         $faker = \Faker\Factory::create();
 
         for ($i=0; $i<=15; $i++) {
+            $fullname = $faker->company();
+            $name = explode(' ', $fullname);
+
             $client = new Client();
-            $client->setName($faker->company());
+            $client->setFullname($fullname)
+                   ->setName($name[0])
+                   ->setEmail($faker->companyEmail());
 
             $manager->persist($client);
             $manager->flush();
