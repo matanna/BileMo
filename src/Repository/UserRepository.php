@@ -79,6 +79,7 @@ class UserRepository extends ServiceEntityRepository
             $results = $this->pagination->paginate($query->execute(), $this->perPage, $this->page); 
 
             return $results;    
-        } 
+        }
+        
     }
 }

@@ -3,16 +3,16 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use App\Repository\ClientRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=ClientRepository::class)
  */
-class Client
+class Client implements UserInterface
 {
     /**
      * @ORM\Id
@@ -23,10 +23,13 @@ class Client
 
     /**
      * @ORM\Column(type="string", length=255)
-     * 
-     * @Groups({"list_users"})
      */
-    private $name;
+    private $username;
+
+        /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $password;
 
     /**
      * @ORM\OneToMany(targetEntity=User::class, mappedBy="client")
@@ -45,6 +48,16 @@ class Client
      */
     private $email;
 
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $googleId;
+
+    /**
+     * @ORM\Column(type="string", length=10, nullable=true)
+     */
+    private $locale;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -55,14 +68,14 @@ class Client
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getUsername(): ?string
     {
-        return $this->name;
+        return $this->username;
     }
 
-    public function setName(string $name): self
+    public function setUsername(string $username): self
     {
-        $this->name = $name;
+        $this->username = $username;
 
         return $this;
     }
@@ -120,4 +133,56 @@ class Client
 
         return $this;
     }
+
+    public function getGoogleId(): ?string
+    {
+        return $this->googleId;
+    }
+
+    public function setGoogleId(?string $googleId): self
+    {
+        $this->googleId = $googleId;
+
+        return $this;
+    }
+
+    public function getLocale(): ?string
+    {
+        return $this->locale;
+    }
+
+    public function setLocale(?string $locale): self
+    {
+        $this->locale = $locale;
+
+        return $this;
+    }
+
+    public function getRoles(): ?array
+    {
+        return ['ROLE_USER'];
+    }
+
+    public function setRoles(?array $roles): self
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    public function setPassword(?string $password): self
+    {
+        $this->password = $password;
+
+        return $this;
+    }
+
+    public function getSalt() {}
+
+    public function eraseCredentials() {}
 }
