@@ -58,6 +58,11 @@ class Client implements UserInterface
      */
     private $locale;
 
+    /**
+    * @ORM\Column(type="array", nullable=true)
+    */
+    private $roles = [];
+
     public function __construct()
     {
         $this->users = new ArrayCollection();

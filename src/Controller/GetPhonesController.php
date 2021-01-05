@@ -3,10 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\Phone;
+use App\Response\FormatResponse;
 use App\Repository\PhoneRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class GetPhonesController extends AbstractController
@@ -43,7 +45,7 @@ class GetPhonesController extends AbstractController
     /**
      * @Route("/phone/{id}", name="show_phone", methods={"GET"})
      */
-    public function showPhone(Phone $phone = null): Response 
+    public function showPhone(FormatResponse $formatResponse, NormalizerInterface $normalizer, Phone $phone = null): Response 
     {
         if ($phone == null) {
             return $this->json([
@@ -52,10 +54,11 @@ class GetPhonesController extends AbstractController
             ], 404);
         }
 
-        return $this->json($phone, 200, [],[
-                'groups' => 'show_phone'
-            ]
-        );
+        $phoneNormalize = $normalizer->normalize($phone, null, ['groups' => 'show_phone']);
+        
+        $phoneFormated = $formatResponse->format($phoneNormalize);  
+
+        return $this->json($phoneFormated, 200);
     }
 
     /**

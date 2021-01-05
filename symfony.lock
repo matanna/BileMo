@@ -132,6 +132,12 @@
     "guzzlehttp/psr7": {
         "version": "1.7.0"
     },
+    "jms/metadata": {
+        "version": "2.4.0"
+    },
+    "jms/serializer": {
+        "version": "3.11.0"
+    },
     "laminas/laminas-code": {
         "version": "3.5.1"
     },
@@ -158,6 +164,9 @@
     },
     "phpseclib/phpseclib": {
         "version": "2.0.30"
+    },
+    "phpstan/phpdoc-parser": {
+        "version": "0.4.10"
     },
     "psr/cache": {
         "version": "1.0.1"
@@ -573,5 +582,8 @@
     },
     "webmozart/assert": {
         "version": "1.9.1"
+    },
+    "willdurand/hateoas": {
+        "version": "3.6.0"
     }
 }

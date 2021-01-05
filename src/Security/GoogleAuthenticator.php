@@ -81,8 +81,8 @@ class GoogleAuthenticator extends AbstractGuardAuthenticator
             $this->entityManager->persist($client);
             $this->entityManager->flush(); 
         }
-
         return $client;
+        
     }
 
     //This is not useful for an API
