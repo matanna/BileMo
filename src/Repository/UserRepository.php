@@ -4,6 +4,8 @@ namespace App\Repository;
 
 use App\Entity\User;
 use App\Entity\Client;
+use App\Response\Pagination;
+use App\Request\ParamValidation;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -16,12 +18,44 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
  */
 class UserRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
-    {
-        parent::__construct($registry, User::class);
-    }
+    
+    /**
+     * paramValidation
+     *
+     * @var mixed
+     */
+    private $paramValidation;
 
-        
+    /**
+     * perPage
+     *
+     * @var int
+     */
+    private $perPage = 10;
+    
+    /**
+     * page
+     *
+     * @var int
+     */
+    private $page = 1;
+
+    /**
+     * pagination
+     *
+     * @var mixed
+     */
+    private $pagination;
+
+    public function __construct(ManagerRegistry $registry, ParamValidation $paramValidation,
+        Pagination $pagination
+    ) {
+        parent::__construct($registry, User::class);
+
+        $this->paramValidation = $paramValidation;
+        $this->pagination = $pagination;
+    }
+    
     /**
      * Method findUsersByClient
      *
@@ -36,48 +70,36 @@ class UserRepository extends ServiceEntityRepository
 
             $this->paramValidation->validateParam($request->query);
             
-            /*
-            $qb = $this->createQueryBuilder('phone')
-                       ->leftJoin('phone.brand', 'phoneBrand')
-                       ->orderBy('phone.price', $this->paramValidation->getByprice()); 
+            $qb = $this->createQueryBuilder('user')
+                       ->leftJoin('user.client', 'userClient')
+                       ->where('userClient = :client')
+                       ->setParameter('client', $client);
 
-            if ($this->paramValidation->getBrand()) {
-                $qb->andWhere('phoneBrand.brand = :brand')
-                   ->setParameter('brand', $this->paramValidation->getBrand());
+            if ($this->paramValidation->getByusername()) {
+                $qb->orderBy('user.username', $this->paramValidation->getByusername());
             }
-
-            if (in_array($this->paramValidation->getAvaibale(), ["0", "1"])) {
-                $qb->andWhere('phone.availability = :availability')
-                   ->setParameter('availability', $this->paramValidation->getAvaibale());
-            }
-
-            if ($this->paramValidation->getMinprice()) {
-                $qb->andWhere('phone.price > :minprice')
-                   ->setParameter('minprice', $this->paramValidation->getMinprice());
-            }
-
-            if ($this->paramValidation->getMaxprice()) {
-                $qb->andWhere('phone.price < :maxprice')
-                ->setParameter('maxprice', $this->paramValidation->getMaxprice());
+            
+            if ($this->paramValidation->getByid()) {
+                $qb->orderBy('user.id', $this->paramValidation->getByid()); 
             }
 
             if ($this->paramValidation->getSearch()) {
-                $qb->andWhere('phone.model LIKE :model')
-                   ->setParameter('model', '%'.$this->paramValidation->getSearch().'%');
+                $qb->andWhere('user.username LIKE :username')
+                   ->setParameter('username', '%'.$this->paramValidation->getSearch().'%');
             }
-                
+  
             $query = $qb->getQuery();
-
+            
             if ($this->paramValidation->getPerPage()) {
-                $this->perPage = $this->paramValidation->getPerPage();
+                $this->perPage = $this->paramValidation->getPerPage(); 
             }
 
             if ($this->paramValidation->getPage()) {
                 $this->page = $this->paramValidation->getPage();
             }
-            */
+            
             $results = $this->pagination->paginate($query->execute(), $this->perPage, $this->page); 
-
+            
             return $results;    
         }
         

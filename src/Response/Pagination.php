@@ -57,6 +57,10 @@ class Pagination
      */
     public function paginate($results, $nbrPerPage, $numPage)
     {
+        if ($results == []) {
+            return null;
+        }
+        
         $this->results = $results;
         $this->nbrPerPage = $nbrPerPage;
         $this->numPage = $numPage - 1;

@@ -19,21 +19,30 @@ class User implements UserInterface
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * 
-     * @Groups({"list_users"})
+     * @Groups({"list_users", "show_user"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      * 
-     * @Groups({"list_users"})
+     * @Groups({"list_users", "show_user"})
+     * 
+     * @Assert\NotBlank(message="Le 'username' ne doit pas ếtre vide.")
+     * @Assert\Length(
+     *                min=3,
+     *                minMessage="Le 'username' doit comporter au moins 3 caractères"
+     * )
      */
     private $username;
 
     /**
      * @ORM\Column(type="string", length=255)
      * 
-     * @Groups({"list_users"})
+     * @Groups({"list_users", "show_user"})
+     * 
+     * @Assert\Email(
+     *               message="'{{ value }}' Cet email n'est pas valide.")
      */
     private $email;
 
@@ -44,6 +53,8 @@ class User implements UserInterface
 
     /**
      * @ORM\Column(type="array", nullable=true)
+     * 
+     * @Groups({"show_user"})
      */
     private $roles = [];
 
@@ -52,11 +63,44 @@ class User implements UserInterface
      */
     private $password;
 
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     * 
+     * @Groups({"show_user"})
+     */
+    private $dateAtCreated;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     * 
+     * @Groups({"show_user"})
+     * 
+     * Assert\Length(
+     *               min=8,
+     *               message="Le numéro de téléphone doit comporter au moins 8 caratctères"
+     * )
+     */
+    private $tel;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * 
+     * @Groups({"show_user"})
+     */
+    private $profilPicture;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * 
+     * @Groups({"show_user"})
+     */
+    private $adress;
+
     public function getId(): ?int
     {
         return $this->id;
     }
-
+    
     public function getUsername(): ?string
     {
         return $this->username;
@@ -120,5 +164,53 @@ class User implements UserInterface
     public function getSalt() {}
 
     public function eraseCredentials() {}
+
+    public function getDateAtCreated(): ?\DateTimeInterface
+    {
+        return $this->dateAtCreated;
+    }
+
+    public function setDateAtCreated(?\DateTimeInterface $dateAtCreated): self
+    {
+        $this->dateAtCreated = $dateAtCreated;
+
+        return $this;
+    }
+
+    public function getTel(): ?string
+    {
+        return $this->tel;
+    }
+
+    public function setTel(?string $tel): self
+    {
+        $this->tel = $tel;
+
+        return $this;
+    }
+
+    public function getProfilPicture(): ?string
+    {
+        return $this->profilPicture;
+    }
+
+    public function setProfilPicture(?string $profilPicture): self
+    {
+        $this->profilPicture = $profilPicture;
+
+        return $this;
+    }
+
+    public function getAdress(): ?string
+    {
+        return $this->adress;
+    }
+
+    public function setAdress(?string $adress): self
+    {
+        $this->adress = $adress;
+
+        return $this;
+    }
 
 }

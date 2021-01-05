@@ -10,7 +10,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
- * @ORM\Entity(repositoryClass=ClientRepository::class)
+ * @ORM\Entity(repositoryClass=App\Repository\ClientRepository::class)
  */
 class Client implements UserInterface
 {

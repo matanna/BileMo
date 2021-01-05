@@ -91,6 +91,20 @@ class ParamValidation
      * @var int
      */
     private $page;
+    
+    /**
+     * byusername
+     *
+     * @var string
+     */
+    private $byusername;
+    
+    /**
+     * byid
+     *
+     * @var string
+     */
+    private $byid;
 
     public function __construct(PhonesFilterValidation $phoneFilterValidation, ParamSortValidation $paramSortValidation)
     {
@@ -140,6 +154,12 @@ class ParamValidation
                     break;
                 case 'page':
                     $this->page = $this->paramSortValidation->validatePage($value);
+                    break;
+                case 'byusername':
+                    $this->byusername = $this->paramSortValidation->validateByusername($value);
+                    break;
+                case 'byid':
+                    $this->byid = $this->paramSortValidation->validateByid($value);
                     break;
                 default : 
                     throw new \Exception("-" . $param . "- ne correspond à aucun paramètres disponible.");
@@ -201,5 +221,15 @@ class ParamValidation
     public function getPage()
     {
         return $this->page;
+    }
+
+    public function getByusername()
+    {
+        return $this->byusername;
+    }
+
+    public function getByid()
+    {
+        return $this->byid;
     }
 }

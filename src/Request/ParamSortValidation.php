@@ -27,7 +27,7 @@ class ParamSortValidation
      *
      * @param $offset
      *
-     * @return void
+     * @return int
      */
     public function validateOffset($offset){
         if (!preg_match("#^[0-9]+$#", $offset)) {
@@ -40,7 +40,7 @@ class ParamSortValidation
      * Method validateLimit
      *
      * @param $limit 
-     * @return void
+     * @return int
      */
     public function validateLimit($limit){
         if (!preg_match("#^[0-9]+$#", $limit)) {
@@ -54,7 +54,7 @@ class ParamSortValidation
      *
      * @param $search
      *
-     * @return void
+     * @return string
      */
     public function validateSearch($search)
     {
@@ -69,7 +69,7 @@ class ParamSortValidation
      *
      * @param $perPage
      *
-     * @return void
+     * @return int
      */
     public function validatePerPage($perPage)
     {
@@ -78,12 +78,35 @@ class ParamSortValidation
         }
         return $perPage;
     }
-
+    
+    /**
+     * Method validatePage
+     *
+     * @param $page $page [explicite description]
+     *
+     * @return int
+     */
     public function validatePage($page)
     {
         if (!preg_match("#^[0-9]+$#", $page)) {
             throw new \Exception("Le paramètre page doit être un entier positif.");
         }
         return $page;
+    }
+
+    public function validateByusername($byusername)
+    {
+        if (!in_array($byusername, ['ASC', 'DESC'])) {
+            throw new \Exception("$byusername n'est pas acceptable. Veuillez renseigner ASC pour le tri en ordre alphabétique ou DESC pour l'inverse.");
+        }
+        return $byusername;
+    }
+
+    public function validateByid($byid)
+    {
+        if (!in_array($byid, ['ASC', 'DESC'])) {
+            throw new \Exception("$byid n'est pas acceptable. Veuillez renseigner ASC pour le tri en ordre croissant ou DESC pour l'inverse.");
+        }
+        return $byid;
     }
 }
