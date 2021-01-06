@@ -92,4 +92,23 @@ class ManageUserController extends AbstractController
         ], 201);
     }
 
+    /**
+     * @Route("/users/{id}", name="delete_user", methods={"DELETE"})
+     */
+    public function deleteUser(User $user)
+    {
+        if ($user->getClient() != $this->getUser()) {
+            throw new NotFoundHttpException;
+        }
+        $id = $user->getId();
+
+        $manager = $this->getDoctrine()->getManager();
+        $manager->remove($user);
+        $manager->flush();
+
+        return $this->json([
+            'status' => 201 . ': Created',
+            'message' => "L'utilisateur $id a été supprimé."
+        ], 200);
+    }
 }

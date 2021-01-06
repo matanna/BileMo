@@ -21,6 +21,9 @@ class ExceptionSubscriber implements EventSubscriberInterface
     //400
     const NOT_ENCODABLE = 'Symfony\Component\Serializer\Exception\NotEncodableValueException';
 
+    //500
+    const NO_CONNEXION = 'Doctrine\DBAL\Exception\ConnectionException';
+
     public static function getSubscribedEvents()
     {
         // return the subscribed events, their methods and priorities
@@ -31,55 +34,70 @@ class ExceptionSubscriber implements EventSubscriberInterface
 
     public function onKernelException(ExceptionEvent $event)
     {
+        $path = $event->getRequest()->getMethod() . ' ' . $event->getRequest()->getPathInfo();
+
+        $exceptionFullName = get_class($event->getThrowable());
+
+        $exceptionName = explode('\\', $exceptionFullName);
         
-        //If error 404
-        if (get_class($event->getThrowable()) === self::HTTP_NOT_FOUND) {
+        $method = 'on' . end($exceptionName);
+       
+        $this->$method($event, $path);
 
-            $path = $event->getRequest()->getMethod() . ' ' . $event->getRequest()->getPathInfo();
-
-            $response =  new JsonResponse([
-                'status' => 404 . ": Page not Found",
-                'message' => "Cette route $path ne correspond à aucune ressource."
-            ], 404);
-
-            $event->setResponse($response);
-        }
-
-        //if error 405
-        if (get_class($event->getThrowable()) === self::BAD_METHOD) {
-            
-            $path = $event->getRequest()->getMethod() . ' ' . $event->getRequest()->getPathInfo();
-
-            $response =  new JsonResponse([
-                'status' => 405 . ": Method Not Allowed",
-                'message' => "Aucune route disponible pour '$path'."
-            ], 405);
-
-            $event->setResponse($response);
-        }
-
-        //if json body is null for POST, PUT and PATCH
-        if (get_class($event->getThrowable()) === self::NO_BODY_DATA) {
-            
-            $path = $event->getRequest()->getMethod() . ' ' . $event->getRequest()->getPathInfo();
-
-            $response =  new JsonResponse([
-                'status' => 400 . ": Bad Request",
-                'message' => "Les données json sont inexistantes dans le body de la requête pour '$path'."
-            ], 400);
-
-            $event->setResponse($response);
-        }
-
-        if (get_class($event->getThrowable()) === self::NOT_ENCODABLE) {
-            
-            $response =  new JsonResponse([
-                'status' => 400 . ": Bad Request",
-                'message' => $event->getThrowable()->getMessage()
-            ], 400);
-
-            $event->setResponse($response);
-        }
     }
 
+    //If error 404 - Page not found
+    private function onNotFoundHttpException($event, $path) 
+    {
+        $response =  new JsonResponse([
+            'status' => 404 . ": Page not Found",
+            'message' => "La route $path ne correspond à aucune ressource."
+        ], 404);
+
+        $event->setResponse($response);
+    }
+
+    //If error 405 - Bad method 
+    private function onMethodNotAllowedHttpException($event, $path) 
+    {  
+        $response =  new JsonResponse([
+            'status' => 405 . ": Method Not Allowed",
+            'message' => "Aucune route disponible pour '$path'."
+        ], 405);
+
+        $event->setResponse($response);
+    }
+
+    //if json body is null for POST, PUT and PATCH
+    private function onNoJsonBodyException($event, $path)
+    {   
+        $response =  new JsonResponse([
+            'status' => 400 . ": Bad Request",
+            'message' => "Les données json sont inexistantes dans le body de la requête pour '$path'."
+        ], 400);
+
+        $event->setResponse($response);
+    }
+
+    //If the serializer or normalizer has a problem
+    private function onNotEncodableValueException($event, $path)
+    {     
+        $response =  new JsonResponse([
+            'status' => 400 . ": Bad Request",
+            'message' => $event->getThrowable()->getMessage()
+        ], 400);
+
+        $event->setResponse($response);
+    }
+
+    //If the connexion to the database failed
+    private function onConnectionException($event, $path)
+    { 
+        $response =  new JsonResponse([
+            'status' => 500 . ": Internal Serer Error",
+            'message' => 'La connexion à la base de données a échouée.'
+        ], 500);
+
+        $event->setResponse($response);
+    }
 }
