@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 
 class GetPhonesController extends AbstractController
 {
@@ -43,50 +44,22 @@ class GetPhonesController extends AbstractController
     }
 
     /**
-     * @Route("/phone/{id}", name="show_phone", methods={"GET"})
+     * @Route("/phones/{id}", name="show_phone", methods={"GET"})
      */
-    public function showPhone(FormatResponse $formatResponse, NormalizerInterface $normalizer, Phone $phone = null): Response 
+    public function showPhone(FormatResponse $formatResponse, NormalizerInterface $normalizer, Phone $phone): Response 
     {
-        if ($phone == null) {
-            return $this->json([
-                'status' => 404 . ": Page not Found",
-                'message' => "Cette ressource n'existe pas."
-            ], 404);
-        }
+        try {
+            $phoneNormalize = $normalizer->normalize($phone, null, ['groups' => 'show_phone']);
 
-        $phoneNormalize = $normalizer->normalize($phone, null, ['groups' => 'show_phone']);
+        } catch (NotEncodableValueException $e) {
+            return $this->json([
+                'status' => 400 . ': Bad Request',
+                'message' => $e->getMessage()
+            ], 400);
+        }
         
         $phoneFormated = $formatResponse->format($phoneNormalize);  
 
         return $this->json($phoneFormated, 200);
     }
-
-    /**
-     * @Route("/phones/filter", name="filter_phones", methods={"GET"})
-     */
-    /*public function filterPhones(PhoneFilterRepository $phoneFilterRepository, Request $request): Response
-    {
-        try {
-            $phones = $phoneFilterRepository->filter($request);
-        } catch (\Exception $e) {
-            return $this->json([
-                'status' => 400 . ": Bad Request",
-                'message' => $e->getMessage()
-            ], 
-            400);
-        }
-        
-        if ($phones == []) {
-            return $this->json([
-                'status' => 200 . ": Success",
-                'message' => "Aucun résultat pour cette requête."
-            ],
-            200);
-        }
-
-        return $this->json($phones, 200, [],[
-                'groups' => 'list_phones'
-            ]
-        );
-    }*/
 }

@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Entity\Client;
 use App\Response\FormatResponse;
 use App\Repository\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,7 +11,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class GetUsersController extends AbstractController
 {
@@ -48,15 +47,12 @@ class GetUsersController extends AbstractController
     }
 
     /**
-     * @Route("/user/{id}", name="show_user", methods={"GET"})
+     * @Route("/users/{id}", name="show_user", methods={"GET"})
      */
-    public function showUser(FormatResponse $formatResponse, NormalizerInterface $normalizer, User $user = null): Response 
+    public function showUser(FormatResponse $formatResponse, NormalizerInterface $normalizer, User $user): Response 
     {
-        if ($user == null) {
-            return $this->json([
-                'status' => 404 . ": Page not Found",
-                'message' => "Cette ressource n'existe pas."
-            ], 404);
+        if ($user->getClient() != $this->getUser()) {
+            throw new NotFoundHttpException;
         }
 
         $userNormalize = $normalizer->normalize($user, null, ['groups' => 'show_user']);

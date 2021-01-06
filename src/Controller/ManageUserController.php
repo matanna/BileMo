@@ -4,14 +4,16 @@ namespace App\Controller;
 
 use App\Entity\User;
 
+use App\Utils\DataControl;
 use App\Utils\ModifyObject;
+use App\Exception\NoJsonBodyException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 
 class ManageUserController extends AbstractController
@@ -20,32 +22,23 @@ class ManageUserController extends AbstractController
      * @Route("/users", name="add_user", methods={"POST"})
      */
     public function addUser(Request $request, SerializerInterface $serializer,
-        ValidatorInterface $validator, UserInterface $client
+        ValidatorInterface $validator, DataControl $dataControl
     ): Response {
 
         $json = $request->getContent();
 
         //Verify $json is not blank
         if ($json == null) {
-            return $this->json([
-                'status' => 400 . ': Bad Request',
-                'message' => "Les données json sont inexistantes."
-            ], 400);
+            throw new NoJsonBodyException;
         }
 
-        //Try to deserialize
-        try {
-            $user = $serializer->deserialize($json, User::class, 'json');
+        //We check if all data are in json
+        $dataControl->userControl(json_decode($json, true));
 
-        } catch (NotEncodableValueException $e) {
-            return $this->json([
-                'status' => 400 . ': Bad Request',
-                'message' => $e->getMessage()
-            ], 400);
-        }
-        $user->setClient($client)
-             ->setDateAtCreated(new \Datetime() )
-        ;
+        $user = $serializer->deserialize($json, User::class, 'json');
+
+        $user->setClient($this->getUser())
+             ->setDateAtCreated(new \DateTime());
         
         //We use the validator component for check all entries in user entity
         $errors = $validator->validate($user);
@@ -64,38 +57,31 @@ class ManageUserController extends AbstractController
     }
 
     /**
-     * @Route("/user/{id}", name="update_user", methods={"PUT", "PATCH"})
+     * @Route("/users/{id}", name="update_user", methods={"PUT", "PATCH"})
      */
-    public function modifyUser(Request $request, User $user,
-        ValidatorInterface $validator, ModifyObject $modifyObject
+    public function modifyUser(Request $request,ValidatorInterface $validator, 
+        ModifyObject $modifyObject, User $user
     ): Response {
 
+        if ($user->getClient() != $this->getUser()) {
+            throw new NotFoundHttpException;
+        }
+
         $json = $request->getContent();
-        $verb = $request->getMethod();
 
+        //Verify $json is not blank
         if ($json == null) {
-            return $this->json([
-                'status' => 400 . ': Bad Request',
-                'message' => "Les données json sont inexistantes."
-            ], 400);
+            throw new NoJsonBodyException;
         }
 
-        try {
-            $userModified = $modifyObject->update($user, $json, $verb);
-
-        } catch (NotEncodableValueException $e) {
-            return $this->json([
-                'status' => 400 . ': Bad Request',
-                'message' => $e->getMessage()
-            ], 400);
-        }
-
+        $userModified = $modifyObject->update($user, $json);
+    
         //We use the validator component for check all entries in user entity
-        $errors = $validator->validate($user);
+        $errors = $validator->validate($userModified);
         if (count($errors) > 0) {
             return $this->json($errors, 400);
         }
-
+        
         $manager = $this->getDoctrine()->getManager();
         $manager->persist($userModified);
         $manager->flush();
@@ -105,4 +91,5 @@ class ManageUserController extends AbstractController
             'message' => "L'utilisateur " .  $userModified->getId() . " a été modifié."
         ], 201);
     }
+
 }
