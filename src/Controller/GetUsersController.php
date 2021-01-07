@@ -47,7 +47,7 @@ class GetUsersController extends AbstractController
     }
 
     /**
-     * @Route("/users/{id}", name="show_user", methods={"GET"})
+     * @Route("/users/{id}", name="show_users", methods={"GET"})
      */
     public function showUser(FormatResponse $formatResponse, NormalizerInterface $normalizer, User $user): Response 
     {

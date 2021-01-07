@@ -19,7 +19,7 @@ use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 class ManageUserController extends AbstractController
 {
     /**
-     * @Route("/users", name="add_user", methods={"POST"})
+     * @Route("/users", name="add_users", methods={"POST"})
      */
     public function addUser(Request $request, SerializerInterface $serializer,
         ValidatorInterface $validator, DataControl $dataControl
@@ -57,7 +57,7 @@ class ManageUserController extends AbstractController
     }
 
     /**
-     * @Route("/users/{id}", name="update_user", methods={"PUT", "PATCH"})
+     * @Route("/users/{id}", name="update_users", methods={"PUT", "PATCH"})
      */
     public function modifyUser(Request $request,ValidatorInterface $validator, 
         ModifyObject $modifyObject, User $user
@@ -93,7 +93,7 @@ class ManageUserController extends AbstractController
     }
 
     /**
-     * @Route("/users/{id}", name="delete_user", methods={"DELETE"})
+     * @Route("/users/{id}", name="delete_users", methods={"DELETE"})
      */
     public function deleteUser(User $user)
     {

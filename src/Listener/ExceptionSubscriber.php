@@ -34,7 +34,7 @@ class ExceptionSubscriber implements EventSubscriberInterface
 
     public function onKernelException(ExceptionEvent $event)
     {
-        $path = $event->getRequest()->getMethod() . ' ' . $event->getRequest()->getPathInfo();
+        $path = $event->getRequest()->getMethod() . ' ' . $event->getRequest()->getUri();
 
         $exceptionFullName = get_class($event->getThrowable());
 
@@ -42,8 +42,9 @@ class ExceptionSubscriber implements EventSubscriberInterface
         
         $method = 'on' . end($exceptionName);
        
-        $this->$method($event, $path);
-
+        if (method_exists($this, $method)) {
+            $this->$method($event, $path);
+        }
     }
 
     //If error 404 - Page not found

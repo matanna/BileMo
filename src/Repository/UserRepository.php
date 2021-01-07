@@ -67,7 +67,7 @@ class UserRepository extends ServiceEntityRepository
     public function findUsersByClient(Client $client, Request $request)
     {
         if($request->query) {
-
+            
             $this->paramValidation->validateParam($request->query);
             
             $qb = $this->createQueryBuilder('user')
@@ -84,6 +84,7 @@ class UserRepository extends ServiceEntityRepository
             }
 
             if ($this->paramValidation->getSearch()) {
+                
                 $qb->andWhere('user.username LIKE :username')
                    ->setParameter('username', '%'.$this->paramValidation->getSearch().'%');
             }
@@ -104,4 +105,14 @@ class UserRepository extends ServiceEntityRepository
         }
         
     }
+
+    public function findLastId()
+    {
+        $qb = $this->createQueryBuilder('u')
+                   ->setMaxResults(1)
+                   ->orderBy('u.id', 'DESC')
+                   ->getQuery()
+                   ->getResult();
+        return $qb[0];
+    } 
 }

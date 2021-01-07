@@ -44,7 +44,7 @@ class GetPhonesController extends AbstractController
     }
 
     /**
-     * @Route("/phones/{id}", name="show_phone", methods={"GET"})
+     * @Route("/phones/{id}", name="show_phones", methods={"GET"})
      */
     public function showPhone(FormatResponse $formatResponse, NormalizerInterface $normalizer, Phone $phone): Response 
     {
