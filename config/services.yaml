@@ -30,3 +30,10 @@ services:
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
     
+    App\Listener\ExceptionSubscriber: 
+        tags:
+            - { name: kernel.event_exception_listener, event: kernel.exception }
+
+    App\Listener\ResponseSubscriber: 
+        tags:
+            - { name: kernel.event_response_listener, event: kernel.response }

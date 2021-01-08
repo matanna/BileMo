@@ -110,4 +110,14 @@ class PhoneRepository extends ServiceEntityRepository
             return $results;    
         }
     }
+
+    public function findLastId()
+    {
+        $qb = $this->createQueryBuilder('p')
+                   ->setMaxResults(1)
+                   ->orderBy('p.id', 'DESC')
+                   ->getQuery()
+                   ->execute();
+        return $qb[0];
+    }
 }

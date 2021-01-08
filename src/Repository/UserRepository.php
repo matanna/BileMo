@@ -5,7 +5,9 @@ namespace App\Repository;
 use App\Entity\User;
 use App\Entity\Client;
 use App\Response\Pagination;
+use Doctrine\ORM\Configuration;
 use App\Request\ParamValidation;
+use Doctrine\Common\Cache\PhpFileCache;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -67,7 +69,7 @@ class UserRepository extends ServiceEntityRepository
     public function findUsersByClient(Client $client, Request $request)
     {
         if($request->query) {
-
+            
             $this->paramValidation->validateParam($request->query);
             
             $qb = $this->createQueryBuilder('user')
@@ -84,10 +86,11 @@ class UserRepository extends ServiceEntityRepository
             }
 
             if ($this->paramValidation->getSearch()) {
+                
                 $qb->andWhere('user.username LIKE :username')
                    ->setParameter('username', '%'.$this->paramValidation->getSearch().'%');
             }
-  
+            
             $query = $qb->getQuery();
             
             if ($this->paramValidation->getPerPage()) {
@@ -104,4 +107,19 @@ class UserRepository extends ServiceEntityRepository
         }
         
     }
+    
+    /**
+     * Method findLastId
+     *
+     * @return User
+     */
+    public function findLastId()
+    {
+        $qb = $this->createQueryBuilder('u')
+                   ->setMaxResults(1)
+                   ->orderBy('u.id', 'DESC')
+                   ->getQuery()
+                   ->getResult();
+        return $qb[0];
+    } 
 }

@@ -3,23 +3,41 @@
 namespace App\Controller;
 
 use App\Entity\Phone;
+
 use App\Response\FormatResponse;
 use App\Repository\PhoneRepository;
+use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 
 class GetPhonesController extends AbstractController
 {
     /**
      * @Route("/phones", name="list_phones", methods={"GET"})
+     * 
+     * 
      */
-    public function getPhones(PhoneRepository $phoneRepository, Request $request): Response
-    {
+    public function getPhones(PhoneRepository $phoneRepository, Request $request,
+        CacheInterface $cache
+    ): Response {
+
         try {
-            $phones = $phoneRepository->findPhones($request);
+
+            //The cache feature is disabled because we work with a pgination feature
+
+            //$phones = $cache->get('item_phones', function(ItemInterface $item) use ($phoneRepository, $request){
+                //$item->expiresAfter(3600);
+
+                $phones = $phoneRepository->findPhones($request);
+
+                //return $phones;
+            //});
+            
         } catch (\Exception $e) {
             return $this->json([
                 'status' => 400 . ": Bad Request",
@@ -43,50 +61,22 @@ class GetPhonesController extends AbstractController
     }
 
     /**
-     * @Route("/phone/{id}", name="show_phone", methods={"GET"})
+     * @Route("/phones/{id}", name="show_phones", methods={"GET"})
      */
-    public function showPhone(FormatResponse $formatResponse, NormalizerInterface $normalizer, Phone $phone = null): Response 
+    public function showPhone(FormatResponse $formatResponse, NormalizerInterface $normalizer, Phone $phone): Response 
     {
-        if ($phone == null) {
-            return $this->json([
-                'status' => 404 . ": Page not Found",
-                'message' => "Cette ressource n'existe pas."
-            ], 404);
-        }
+        try {
+            $phoneNormalize = $normalizer->normalize($phone, null, ['groups' => 'show_phone']);
 
-        $phoneNormalize = $normalizer->normalize($phone, null, ['groups' => 'show_phone']);
+        } catch (NotEncodableValueException $e) {
+            return $this->json([
+                'status' => 400 . ': Bad Request',
+                'message' => $e->getMessage()
+            ], 400);
+        }
         
         $phoneFormated = $formatResponse->format($phoneNormalize);  
 
         return $this->json($phoneFormated, 200);
     }
-
-    /**
-     * @Route("/phones/filter", name="filter_phones", methods={"GET"})
-     */
-    /*public function filterPhones(PhoneFilterRepository $phoneFilterRepository, Request $request): Response
-    {
-        try {
-            $phones = $phoneFilterRepository->filter($request);
-        } catch (\Exception $e) {
-            return $this->json([
-                'status' => 400 . ": Bad Request",
-                'message' => $e->getMessage()
-            ], 
-            400);
-        }
-        
-        if ($phones == []) {
-            return $this->json([
-                'status' => 200 . ": Success",
-                'message' => "Aucun résultat pour cette requête."
-            ],
-            200);
-        }
-
-        return $this->json($phones, 200, [],[
-                'groups' => 'list_phones'
-            ]
-        );
-    }*/
 }
