@@ -25,13 +25,18 @@ class GetUsersController extends AbstractController
     ): Response {
 
         try {
-            //We call the cache 
-            $users = $cache->get('item.users',function(ItemInterface $item) use ($userRepository, $request, $client){
+            
+            //The cache feature is disabled because we work with a pgination feature
+
+            //$users = $cache->get('item.users',function(ItemInterface $item) use ($userRepository, $request, $client){
 
                 //the cache is clear at the end of 60s
-                $item->expiresAfter(60);
-                return $userRepository->findUsersByClient($client, $request);
-            });
+                //$item->expiresAfter(900);
+
+                $users = $userRepository->findUsersByClient($client, $request);
+
+                //return $users;
+            //});
             
         } catch (\Exception $e) {
             return $this->json([

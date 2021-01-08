@@ -3,12 +3,15 @@
 namespace App\Controller;
 
 use App\Entity\Phone;
+
 use App\Response\FormatResponse;
 use App\Repository\PhoneRepository;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\CacheInterface;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use Swagger\Annotations as SWG;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,17 +21,24 @@ class GetPhonesController extends AbstractController
 {
     /**
      * @Route("/phones", name="list_phones", methods={"GET"})
+     * 
+     * 
      */
     public function getPhones(PhoneRepository $phoneRepository, Request $request,
         CacheInterface $cache
     ): Response {
 
         try {
-            //We call the cache 
-            $phones = $cache->get('item_phones', function(ItemInterface $item) use ($phoneRepository, $request){
-                $item->expiresAfter(3600);
-                return $phoneRepository->findPhones($request);
-            });
+
+            //The cache feature is disabled because we work with a pgination feature
+
+            //$phones = $cache->get('item_phones', function(ItemInterface $item) use ($phoneRepository, $request){
+                //$item->expiresAfter(3600);
+
+                $phones = $phoneRepository->findPhones($request);
+
+                //return $phones;
+            //});
             
         } catch (\Exception $e) {
             return $this->json([
