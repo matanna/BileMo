@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Response\FormatResponse;
 use App\Repository\UserRepository;
+use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -19,11 +21,17 @@ class GetUsersController extends AbstractController
      * @Route("/users", name="list_users", methods={"GET"})
      */
     public function getUsers(
-        UserRepository $userRepository, Request $request, UserInterface $client
+        UserRepository $userRepository, UserInterface $client, Request $request, CacheInterface $cache
     ): Response {
 
         try {
-            $users = $userRepository->findUsersByClient($client, $request);
+            //We call the cache 
+            $users = $cache->get('item.users',function(ItemInterface $item) use ($userRepository, $request, $client){
+
+                //the cache is clear at the end of 60s
+                $item->expiresAfter(60);
+                return $userRepository->findUsersByClient($client, $request);
+            });
             
         } catch (\Exception $e) {
             return $this->json([
@@ -32,7 +40,7 @@ class GetUsersController extends AbstractController
             ], 
             400);
         }
-
+        
         if ($users == []) {
             return $this->json([
                 'status' => 200 . ": Success",

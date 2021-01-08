@@ -65,18 +65,18 @@ class ResponseSubscriber implements EventSubscriberInterface
             return;
 
         //For empty response - 200, 201, 204
-        } elseif (!array_key_exists('data', $content)) {
+        } elseif ($content != null && !array_key_exists('data', $content)) {
             
             $newContent = $this->addInEmptyResponse->addInResponse($content);
-            
         } else {
             
-            $newContent = $this->addInFullyResponse->addInResponse($content);
-            
+            $newContent = $this->addInFullyResponse->addInResponse($content); 
         }
 
-        $newContent['current_client'] = $this->formatCurrentClient($event);
-
+        if ($this->client != null) {
+            $newContent['current_client'] = $this->formatCurrentClient($event);
+        }
+        
         $newContent = json_encode($newContent);
         $event->getResponse()->setContent($newContent);
     }

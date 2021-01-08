@@ -5,6 +5,8 @@ namespace App\Controller;
 use App\Entity\Phone;
 use App\Response\FormatResponse;
 use App\Repository\PhoneRepository;
+use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -17,10 +19,17 @@ class GetPhonesController extends AbstractController
     /**
      * @Route("/phones", name="list_phones", methods={"GET"})
      */
-    public function getPhones(PhoneRepository $phoneRepository, Request $request): Response
-    {
+    public function getPhones(PhoneRepository $phoneRepository, Request $request,
+        CacheInterface $cache
+    ): Response {
+
         try {
-            $phones = $phoneRepository->findPhones($request);
+            //We call the cache 
+            $phones = $cache->get('item_phones', function(ItemInterface $item) use ($phoneRepository, $request){
+                $item->expiresAfter(3600);
+                return $phoneRepository->findPhones($request);
+            });
+            
         } catch (\Exception $e) {
             return $this->json([
                 'status' => 400 . ": Bad Request",
