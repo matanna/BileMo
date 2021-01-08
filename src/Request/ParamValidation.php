@@ -166,7 +166,7 @@ class ParamValidation
             }
         }
         if (isset($this->minprice) || isset($this->maxprice)) {
-            
+    
             $interval = $this->phoneFilterValidation->validIntervalPrice($this->minprice, $this->maxprice);
             $this->minprice = $interval[0];
             $this->maxprice = $interval[1];
