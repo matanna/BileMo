@@ -87,9 +87,9 @@ class ManageUserController extends AbstractController
         $manager->flush();
         
         return $this->json([
-            'status' => 201 . ': Created',
+            'status' => 200 . ': Success',
             'message' => "L'utilisateur " .  $userModified->getId() . " a été modifié."
-        ], 201);
+        ], 200);
     }
 
     /**
@@ -107,7 +107,7 @@ class ManageUserController extends AbstractController
         $manager->flush();
 
         return $this->json([
-            'status' => 201 . ': Created',
+            'status' => 200 . ': Success',
             'message' => "L'utilisateur $id a été supprimé."
         ], 200);
     }
