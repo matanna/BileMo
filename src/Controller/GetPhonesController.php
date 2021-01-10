@@ -6,6 +6,9 @@ use App\Entity\Phone;
 
 use App\Response\FormatResponse;
 use App\Repository\PhoneRepository;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
+use OpenApi\Annotations as OA;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,9 +21,25 @@ use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 class GetPhonesController extends AbstractController
 {
     /**
+     * 
      * @Route("/phones", name="list_phones", methods={"GET"})
      * 
-     * 
+     * @OA\Response(
+     *     response=200,
+     *     description="Returns the list of phones with pagination system",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=Phone::class, groups={"list_phones"}))
+     *     )
+     * )
+     * @OA\Parameter(
+     *     name="order",
+     *     in="query",
+     *     description="The field used to order rewards",
+     *     @OA\Schema(type="string")
+     * )
+     * @OA\Tag(name="phones")
+     * @Security(name="Bearer")
      */
     public function getPhones(PhoneRepository $phoneRepository, Request $request,
         CacheInterface $cache

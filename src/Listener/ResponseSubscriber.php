@@ -61,7 +61,6 @@ class ResponseSubscriber implements EventSubscriberInterface
         
         //For error message - 400, 404, 401, 500, ...
         if (!in_array($event->getResponse()->getStatusCode($content), [200, 201, 204])) {
-            
             return;
 
         //For empty response - 200, 201, 204
@@ -77,6 +76,11 @@ class ResponseSubscriber implements EventSubscriberInterface
             $newContent['current_client'] = $this->formatCurrentClient($event);
         }
         
+        //Response for APi DOC - Nelmio bundle
+        if ($this->route == 'app.swagger_ui') {
+            return $event->getResponse();
+        } 
+
         $newContent = json_encode($newContent);
         $event->getResponse()->setContent($newContent);
     }

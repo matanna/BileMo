@@ -8,6 +8,11 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+
+        doc:
+            pattern: ^/api/doc
+            security: false
+
         api:
             # anonymous: true
             lazy: true
@@ -18,8 +23,6 @@ security:
             guard:
                 authenticators:
                     - App\Security\GoogleAuthenticator
-
-        
             # logout:
                 # path: app_logout
                 # where to redirect after logout
