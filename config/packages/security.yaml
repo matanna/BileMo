@@ -10,7 +10,7 @@ security:
             security: false
 
         doc:
-            pattern: ^/api/doc
+            pattern: ^/doc
             security: false
 
         api:

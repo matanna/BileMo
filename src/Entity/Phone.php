@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\PhoneRepository;
+use OpenApi\Annotations as OA;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
@@ -104,6 +105,8 @@ class Phone
      * @ORM\ManyToOne(targetEntity=PhoneBrand::class, inversedBy="phones")
      * 
      * @Groups({"list_phones", "show_phone"})
+     * 
+     * 
      */
     private $brand;
 

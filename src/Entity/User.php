@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
+use OpenApi\Annotations as OA;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -55,6 +56,8 @@ class User implements UserInterface
      * @ORM\Column(type="array", nullable=true)
      * 
      * @Groups({"show_user"})
+     * 
+     * @OA\Property(type="array", @OA\Items(type="string"))
      */
     private $roles = [];
 

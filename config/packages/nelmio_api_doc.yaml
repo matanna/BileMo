@@ -1,11 +1,49 @@
 nelmio_api_doc:
+
     documentation:
+
         info:
             title: API BileMo
-            description: This is the documentation for the API BileMo
+            description: <p>This is documentation for the API BileMo.</p> 
+                         <p>This API works with <strong>Google Authentication System</strong>. It use <strong>OAuth2 Protocol.</strong>
+                         <a href="https://developers.google.com/identity/protocols/oauth2/web-server">Official documentation</a></p></p>
+                         <p>For implement this system, follow these steps &#58;
+                         <p>1 - You must to register your application as a client on the <a href="https://console.developers.google.com">Google API SERVICE </a>and define a redirect URI.</p>
+                         <p>2 - Google then gives you 2 keys &#58 <strong>ID_client</strong> and <strong>ID_secret</strong>. You must store these informations.</p>
+                         <p>3 - Then, you can connect to the google authentication page with the <strong>Authorization URL</strong> wich can be found in the <strong>Authorize</strong> section.</p>
+                         <p>4 - Once you have logged in with your account, Google send you a <strong>code</strong> in query parameters with the <strong>redirect URI</strong> previously specified.</p>
+                         <p>5 - Finally, for get an <strong>acces_token</strong>, you must put this code in query parameter of the <strong>Token URL</strong> wich can be found in the <strong>Authorize</strong> section and send this.</p>
+                         <p>6 - Google then gives you an <strong>access_token</strong> and a <strong>refresh_token</strong> in json response. This token is valid for <strong>1 hour</strong>. After, you can get another acces_token with the <strong>refresh_token</strong> (see the documentation)</p>   
+                         <p><em>You can automate these operations so that your application connects to your google account itself.</em></p>
             version: 1.0.0
-    #areas: # to filter documented areas
-        #path_patterns:
-            #- ^/(?!api/doc$) # Accepts routes under / except /doc
-        #host_patterns: 
-            #- ^/
+
+        servers: 
+            - url: https://127.0.0.1:8000
+              description: API over HTTPS
+
+        components: 
+            securitySchemes: 
+                Bearer: 
+                    type: oauth2
+                    flows:
+                        authorizationCode:
+                            authorizationUrl: https://accounts.google.com/o/oauth2/v2/auth?scope=profile email&access_type=offline&response_type=code&redirect_uri={redirect_uri}&client_id={google_id}
+                            tokenUrl: https://oauth2.googleapis.com/token?code={code}&client_id={google_id}&client_secret={google_secret}&redirect_uri={redirect_uri}&grant_type=authorization_code
+                            scopes: 
+                                read: read access
+
+            
+    models:
+        names:
+            - { alias: PhonesList, type: App\Entity\Phone, groups: [list_phones] }
+            - { alias: PhoneDetails, type: App\Entity\Phone, groups: [show_phone] }
+            - { alias: UsersList, type: App\Entity\User, groups: [list_users] }
+            - { alias: UsersDetails, type: App\Entity\User, groups: [show_user] }
+            
+
+    areas: # to filter documented areas
+        path_patterns: [^/(?!_error|_wdt|_profiler|doc)]
+
+    
+            
+        
