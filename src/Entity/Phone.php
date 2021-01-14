@@ -21,6 +21,7 @@ class Phone
      * @ORM\Column(type="integer")
      * 
      * @Groups({"list_phones", "show_phone"})
+     * 
      */
     private $id;
 

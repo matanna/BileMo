@@ -17,6 +17,13 @@ class AddInEmptyResponse
     private $className;
     
     /**
+     * resource
+     *
+     * @var mixed
+     */
+    private $resource;
+    
+    /**
      * uri
      *
      * @var string
@@ -48,6 +55,8 @@ class AddInEmptyResponse
     {
         $explode = explode('_', $request->getCurrentRequest()->get('_route'));
         $this->className = substr(ucfirst(end($explode)), 0, -1);
+
+        $this->resource = end($explode);
 
         $this->uri = $request->getCurrentRequest()->getUri();
 
@@ -108,8 +117,12 @@ class AddInEmptyResponse
 
         $content['_created']['data'] = $objectNormalize;
 
-        $uri = 'GET ' . explode('?', $this->uri)[0]. '/' . $object->getId();
-        $content['_links']['self'] = $uri;
+        $uri = explode('?', $this->uri)[0]. '/' . $object->getId();
+        $content['_links']['self'] = [
+            'Href' => $uri,
+            'Rel' => 'show_' . $this->resource,
+            'Method' => 'GET'
+        ];
 
         return $content;
     }
@@ -136,8 +149,12 @@ class AddInEmptyResponse
 
         $content['_modify']['data'] = $objectNormalize;
 
-        $uri = 'GET ' . explode('?', $this->uri)[0];
-        $content['_links']['self'] = $uri;
+        $uri = explode('?', $this->uri)[0];
+        $content['_links']['self'] = [
+            'Href' => $uri,
+            'Rel' => 'show_' . $this->resource,
+            'Method' => 'GET'
+        ];
 
         return $content;
     }

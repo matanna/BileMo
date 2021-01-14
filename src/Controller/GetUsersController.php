@@ -37,8 +37,12 @@ class GetUsersController extends AbstractController
      *     response=200,
      *     description="Returns the list of users linked to a client with pagination system",
      *     @OA\JsonContent(
-     *        type="array",
-     *        @OA\Items(ref=@Model(type=User::class, groups={"list_users"}))
+     *        type="object",
+     *        example={
+     *              "id": 853,
+     *              "username": "johndoe654",
+     *              "email": "johndoe654@orange.fr"
+     *          }
      *     )
      * )
      * @OA\Response(
@@ -128,8 +132,19 @@ class GetUsersController extends AbstractController
      *     response=200,
      *     description="Returns details of one user linked to a client",
      *     @OA\JsonContent(
-     *        type="array",
-     *        @OA\Items(ref=@Model(type=User::class, groups={"show_user"}))
+     *        type="object",
+     *        example={
+     *               "id": 853,
+     *              "username": "johndoe654",
+     *              "email": "johndoe654@orange.fr",
+     *               "roles": {
+     *                  "ROLE_USER"
+     *               },
+     *               "dateAtCreated": "2021-01-14T10:27:38.251Z",
+     *               "tel": "0645785859",
+     *               "profilPicture": "my_picture.jpg",
+     *               "adress": "154, rue des bouleaux 44450 Paris"
+     *         }
      *     )
      * )
      * @OA\Response(
