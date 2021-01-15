@@ -89,7 +89,11 @@ class AddInFullyResponse
             //We remove parameters 
             $uri = explode('?', $this->uri)[0]. '/' . $content['data'][$item]['id'];
             //we add id
-            $content['data'][$item]['_link']['self'] = "GET " . $uri;   
+            $content['data'][$item]['_link']['self'] = [
+                "Href" => $uri,
+                "Rel" => $this->route,
+                "Method" => "GET"
+            ];   
         }
         return $content;
     }

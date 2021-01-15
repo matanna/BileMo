@@ -26,11 +26,6 @@ class Client implements UserInterface
      */
     private $username;
 
-        /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $password;
-
     /**
      * @ORM\OneToMany(targetEntity=User::class, mappedBy="client")
      * 
@@ -175,17 +170,7 @@ class Client implements UserInterface
         return $this;
     }
 
-    public function getPassword(): ?string
-    {
-        return $this->password;
-    }
-
-    public function setPassword(?string $password): self
-    {
-        $this->password = $password;
-
-        return $this;
-    }
+    public function getPassword() {}
 
     public function getSalt() {}
 

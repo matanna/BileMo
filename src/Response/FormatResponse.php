@@ -43,7 +43,7 @@ class FormatResponse
 
         foreach($data as $key => $element) {
             if (is_int($key)) {
-                $newData['item n°' . $key] = $element;
+                $newData['item_' . $key] = $element;
                 
             } else {
                 $newData[$key] = $element; 

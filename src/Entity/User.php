@@ -13,7 +13,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\Table(name="`user`")
  */
-class User implements UserInterface
+class User
 {
     /**
      * @ORM\Id
@@ -60,11 +60,6 @@ class User implements UserInterface
      * @OA\Property(type="array", @OA\Items(type="string"))
      */
     private $roles = [];
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $password;
 
     /**
      * @ORM\Column(type="datetime", nullable=true)
@@ -158,22 +153,6 @@ class User implements UserInterface
 
         return $this;
     }
-
-    public function getPassword(): ?string
-    {
-        return $this->password;
-    }
-
-    public function setPassword(?string $password): self
-    {
-        $this->password = $password;
-
-        return $this;
-    }
-
-    public function getSalt() {}
-
-    public function eraseCredentials() {}
 
     public function getDateAtCreated(): ?\DateTimeInterface
     {

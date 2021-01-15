@@ -38,9 +38,18 @@ class GetPhonesController extends AbstractController
      *     response=200,
      *     description="Returns the list of phones with pagination system",
      *     @OA\JsonContent(
-     *        type="array",
-     *        @OA\Items(ref=@Model(type=Phone::class, groups={"list_phones"}))
-     *     )
+     *        type="object",
+     *        example={
+     *                "id": 112,
+     *                "model": "Samsung Galaxy S8",
+     *                "price": 854.54,
+     *                "color": "dark grey",
+     *                "availability": true,
+     *                "brand": {
+     *                      "brand": "Samsung"
+     *                  }
+     *            }
+     *       )
      * )
      * @OA\Response(
      *     response=204,
@@ -146,10 +155,33 @@ class GetPhonesController extends AbstractController
      *     response=200,
      *     description="Returns details of one phone",
      *     @OA\JsonContent(
-     *        type="array",
-     *        @OA\Items(ref=@Model(type=Phone::class, groups={"show_phone"}))
-     *        
-     *     )
+     *        type="object",
+     *        example={
+     *                "id": 112,
+     *                "model": "Samsung Galaxy S8",
+     *                "catchphrase": "Qui aut esse sit dolores.",
+     *                "description": "Perspiciatis velit aut quia consequatur similique recusandae. Dicta voluptatem est aut recusandae quaerat quibusdam.",
+     *                "price": 854.54,
+     *                "color": "dark grey",
+     *                "size": "144 mm, 76 mm, 8 mm",
+     *                "batteryPower": "4241 mAh",
+     *                "osName": "PhoneOs",
+     *                "weight": "198 g",
+     *                "memory": 28,
+     *                "availability": true,
+     *                "brand": {
+     *                      "brand": "Samsung"
+     *                },
+     *                "photos": {
+     *                      {  
+     *                          "name": "public/photos/Huawei ad-tenetur_back.jpg"
+     *                      },
+     *                      {
+     *                          "name": "public/photos/Huawei ad-tenetur_micro.jpg"
+     *                      }
+     *                  }
+     *             }
+     *       )
      * )
      * @OA\Response(
      *     response=404,
