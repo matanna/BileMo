@@ -19,7 +19,7 @@ class ClientFixture extends Fixture
 
             $client = new Client();
             $client->setFullname($fullname)
-                   ->setName($name[0])
+                   ->setUsername($name[0])
                    ->setEmail($faker->companyEmail());
 
             $manager->persist($client);
@@ -29,7 +29,6 @@ class ClientFixture extends Fixture
                 $user = new User();
                 $user->setUsername($faker->username())
                      ->setEmail($faker->freeEmail())
-                     ->setPassword($faker->password())
                      ->setClient($client)
                 ;
 
