@@ -34,6 +34,9 @@ class ClientRepository extends ServiceEntityRepository
                    ->getQuery()
                    ->getResult();
                    
+        if (!$qb) {
+            return null;
+        }
         return $qb[0];
     }
 }

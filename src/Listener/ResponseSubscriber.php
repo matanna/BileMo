@@ -57,7 +57,7 @@ class ResponseSubscriber implements EventSubscriberInterface
         $this->route = $event->getRequest()->get('_route');
 
         $content = $event->getResponse()->getContent();
-        $content = json_decode($content,true);
+        $content = json_decode($content, true);
         
         //For error message - 400, 404, 401, 500, ...
         if (!in_array($event->getResponse()->getStatusCode($content), [200, 201, 204])) {

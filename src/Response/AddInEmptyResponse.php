@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class AddInEmptyResponse
 {    
@@ -83,19 +84,22 @@ class AddInEmptyResponse
 
             if ($this->request->getCurrentRequest()->getMethod() == 'POST') {
 
-                $newContent= $this->createdElement($repo, $existingContent);
+                return $this->createdElement($repo, $existingContent);
             }
 
             if (in_array($this->request->getCurrentRequest()->getMethod(), ['PUT', 'PATCH'])) {
                 
-                $newContent = $this->updatedElement($repo, $existingContent); 
+                return $this->updatedElement($repo, $existingContent); 
             }
 
             if ($this->request->getCurrentRequest()->getMethod() == 'DELETE') {
-                $newContent = $existingContent;
+                return $existingContent;
             }
-        } 
-        return $newContent;
+            if ($this->request->getCurrentRequest()->getMethod() == 'GET') {
+                throw new NotFoundHttpException();
+            }
+        }
+        return $existingContent;
     }
     
     /**
