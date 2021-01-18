@@ -64,6 +64,7 @@ class AddInFullyResponse
         if ($routeSuffix[0] == 'list') {
             $newContent = $this->addInListElements($existingContent);
 
+
         } elseif ($routeSuffix[0] == 'show') {
             $newContent = $this->addInOneElement($existingContent);
 
@@ -84,6 +85,9 @@ class AddInFullyResponse
      */
     private function addInListElements($content)
     {
+        $explode = explode('_', $this->route);
+        $resource = end($explode);
+
         foreach ($content['data'] as $item => $details) {
 
             //We remove parameters 
@@ -94,6 +98,13 @@ class AddInFullyResponse
                 "Rel" => $this->route,
                 "Method" => "GET"
             ];   
+        }
+        if ($resource === 'users') {
+            $content['data']['_link']['add'] = [
+                "Href" => 'https://127.0.0.1:8000/users',
+                "Rel" => 'add_users',
+                "Method" => "POST"
+            ];
         }
         return $content;
     }
